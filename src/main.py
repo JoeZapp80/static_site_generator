@@ -1,24 +1,25 @@
 import shutil, os, re
 from markdown_blocks import markdown_to_html_node
 
+# Get the absolute path to the directory this script is in
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Go up to the project root (e.g., if script is in /root/scripts/main.py, and root is one level up)
+project_root = os.path.abspath(os.path.join(script_dir, ".."))
+
+# Now you're solid!
+pub_path = os.path.join(project_root, "public")
+static_path = os.path.join(project_root, "static")
+content_path = os.path.join(project_root, "content")
+
 
 def main():
     copy_source_to_public()
-    print("!!")
     generate_content()
-    print("!!")
 
 
 def generate_content():
-    # Create a root window (it can be hidden)
-    # Get the absolute path to the directory this script is in
-    script_dir = os.path.dirname(os.path.abspath(__file__))
 
-    # Go up to the project root (e.g., if script is in /root/scripts/main.py, and root is one level up)
-    project_root = os.path.abspath(os.path.join(script_dir, ".."))
-
-    # Now you're solid!
-    pub_path = os.path.join(project_root, "public")
     content_path = os.path.join(project_root, "content")
 
     def recursion_tree(content_path, pub_path):
@@ -85,15 +86,6 @@ def extract_title(markdown):
 
 
 def copy_source_to_public():
-    # Get the absolute path to the directory this script is in
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-
-    # Go up to the project root (e.g., if script is in /root/scripts/main.py, and root is one level up)
-    project_root = os.path.abspath(os.path.join(script_dir, ".."))
-
-    # Now you're solid!
-    pub_path = os.path.join(project_root, "public")
-    static_path = os.path.join(project_root, "static")
 
     def create_tree(static_path, pub_path):
 
