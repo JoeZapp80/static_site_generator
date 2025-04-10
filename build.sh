@@ -1,1 +1,3 @@
-python3 src/main.py "/https://github.com/JoeZapp80/static_site_generator/"
+
+#!/bin/bash
+python3 src/main.py "/static_site_generator/"
