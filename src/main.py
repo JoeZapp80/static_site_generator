@@ -1,5 +1,11 @@
-import shutil, os, re
+import shutil, os, re, sys
 from markdown_blocks import markdown_to_html_node
+
+# Check if a basepath was provided as a command line argument
+if len(sys.argv) > 1:
+    basepath = sys.argv[1]
+else:
+    basepath = "/"  # Default to "/" if no argument is provided
 
 # Get the absolute path to the directory this script is in
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -8,21 +14,21 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(script_dir, ".."))
 
 # Now you're solid!
-pub_path = os.path.join(project_root, "public")
+pub_path = os.path.join(project_root, "docs")
 static_path = os.path.join(project_root, "static")
 content_path = os.path.join(project_root, "content")
 
 
 def main():
     copy_source_to_public()
-    generate_content()
+    generate_content(basepath)
 
 
-def generate_content():
+def generate_content(basepath):
 
     content_path = os.path.join(project_root, "content")
 
-    def recursion_tree(content_path, pub_path):
+    def recursion_tree(content_path, pub_path, basepath):
 
         for item in os.listdir(content_path):
             content_path = os.path.join(content_path, item)
@@ -33,7 +39,7 @@ def generate_content():
                 os.mkdir(pub_path)
                 print(f"directory made: {pub_path}")
                 # if a directory dive deeper
-                recursion_tree(content_path, pub_path)
+                recursion_tree(content_path, pub_path, basepath)
 
             else:
                 print("?")
@@ -42,7 +48,10 @@ def generate_content():
                 if extension == ".md":
                     pub_path = pub_path.rsplit(".md", 1)[0] + ".html"
                     generate_page(
-                        content_path, project_root + "/template.html", pub_path
+                        content_path,
+                        project_root + "/template.html",
+                        pub_path,
+                        basepath,
                     )
 
                     print(f"File generated: {pub_path}")
@@ -55,10 +64,10 @@ def generate_content():
             content_path = content_path.rsplit("/", 1)[0] + "/"
             pub_path = pub_path.rsplit("/", 1)[0] + "/"
 
-    recursion_tree(content_path, pub_path)
+    recursion_tree(content_path, pub_path, basepath)
 
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     with open(from_path, "r") as file:
         contents = file.read()
@@ -70,6 +79,8 @@ def generate_page(from_path, template_path, dest_path):
     title = extract_title(contents)
     result = template.replace("{{ Title }}", title)
     result = result.replace("{{ Content }}", html_string)
+    result = result.replace('href="/', f'href="{basepath}')
+    result = result.replace('src="/', f'src="{basepath}')
 
     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
     with open(dest_path, "w") as file:

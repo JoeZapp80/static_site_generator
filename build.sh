@@ -1,0 +1,1 @@
+python3 src/main.py "/https://github.com/JoeZapp80/static_site_generator/"
